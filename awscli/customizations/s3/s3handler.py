@@ -178,6 +178,11 @@ class S3Handler(object):
     def _is_multipart_task(self, filename):
         # First we need to determine if it's an operation that even
         # qualifies for multipart upload.
+
+        # no data being transferred to or from s3, so no multipart
+        if filename.operation_name == 'move' and filename.src_type == filename.dest_type:
+            return False
+
         if hasattr(filename, 'size'):
             above_multipart_threshold = filename.size > self.multi_threshold
             if above_multipart_threshold:
